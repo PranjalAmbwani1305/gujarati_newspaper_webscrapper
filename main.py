@@ -34,26 +34,16 @@ def extract_article(link, newspaper):
         article_text = ""
         if newspaper == "Mid Day":
             content = soup.find('div', class_='article-body')
-            if content:
-                article_text = "\n".join(p.get_text() for p in content.find_all('p'))
-            else:
-                paragraphs = soup.find_all('p')
-                article_text = "\n".join(p.get_text() for p in paragraphs if p.get_text())
         elif newspaper == "Divya Bhaskar":
-            # Specific logic for Divya Bhaskar articles
-            content = soup.find('div', class_='db-article-body')  # Update if the class name changes
-            if content:
-                article_text = "\n".join(p.get_text() for p in content.find_all('p'))
-            else:
-                paragraphs = soup.find_all('p')
-                article_text = "\n".join(p.get_text() for p in paragraphs if p.get_text())
+            content = soup.find('div', class_='db-article-body')
         else:
             content = soup.find('div', class_='article-body')
-            if content:
-                article_text = "\n".join(p.get_text() for p in content.find_all('p'))
-            else:
-                paragraphs = soup.find_all('p')
-                article_text = "\n".join(p.get_text() for p in paragraphs if p.get_text())
+
+        if content:
+            article_text = "\n".join(p.get_text() for p in content.find_all('p'))
+        else:
+            paragraphs = soup.find_all('p')
+            article_text = "\n".join(p.get_text() for p in paragraphs if p.get_text())
 
         return article_date, article_text if article_text else "No article content found."
     except Exception as e:
@@ -97,6 +87,10 @@ def main():
 
                 with st.spinner("Searching for articles..."):
                     links = fetch_article_links(base_url, translated_keyword)
+
+                    # Debugging output
+                    st.write(f"Searching for articles with keyword: '{translated_keyword}'")
+                    st.write(f"Found links: {links}")
 
                     if links:
                         st.success(f"Found {len(links)} articles for the keyword '{translated_keyword}':")
