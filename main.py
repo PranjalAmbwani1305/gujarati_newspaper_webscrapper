@@ -52,8 +52,8 @@ def main():
                             st.write(f"**Content:**\n{content}")
                 else:
                     st.warning(f"No articles found with '{keyword}'.")
-        else:
-            st.error("Please enter a keyword.")
+    else:
+        st.error("Please enter a keyword.")
 
 if __name__ == "__main__":
     main()
