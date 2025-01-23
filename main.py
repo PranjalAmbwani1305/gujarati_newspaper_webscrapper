@@ -19,7 +19,7 @@ def fetch_article_links(base_url, keyword):
 
         return links
     except Exception as e:
-        st.error(f"An error occurred while fetching links: {e}")
+        st.error(f"Oops! Something went wrong while fetching the links: {e}")
         return []
 
 def extract_article(link, newspaper):
@@ -54,6 +54,12 @@ def extract_article(link, newspaper):
 def main():
     st.set_page_config(page_title="Gujarati News Article Scraper", page_icon="📰")
     st.title("Gujarati News Article Finder")
+    
+    st.markdown("""
+    **Welcome to the Gujarati News Article Finder!**  
+    This tool allows you to search for articles from popular Gujarati newspapers like Gujarat Samachar, Mid Day, and Divya Bhaskar.  
+    You can search for articles by keyword, and we'll fetch relevant articles for you.
+    """)
 
     newspaper = st.sidebar.selectbox(
         "Select a Newspaper",
@@ -62,33 +68,33 @@ def main():
 
     newspaper_urls = {
         "Gujarat Samachar": "https://www.gujaratsamachar.com/",
-        "Mid Day": "https://www.mid-day.com/",
+        "Mid Day": "https://www.gujaratimidday.com/",
         "Divya Bhaskar": "https://www.divyabhaskar.co.in/"
     }
 
     base_url = newspaper_urls.get(newspaper)
 
-    keyword = st.text_input("Keyword to Search")
+    keyword = st.text_input("Enter a Keyword to Search (e.g., 'Cricket', 'Politics')")
 
-    if st.button("Find and Extract Articles"):
+    if st.button("Find Articles"):
         if keyword:
             with st.spinner("Detecting keyword language..."):
                 detected_language = GoogleTranslator(source='auto', target='en').translate(keyword)
                 if detected_language == keyword:
-                    st.info(f"Detected keyword in English. Using it directly: '{keyword}'")
+                    st.info(f"Keyword detected in English: '{keyword}'")
                     translated_keyword = keyword
                 else:
-                    st.info(f"Detected keyword in Gujarati. Using it directly: '{keyword}'")
+                    st.info(f"Keyword detected in Gujarati: '{keyword}'")
                     translated_keyword = keyword
 
                 with st.spinner("Searching for articles..."):
                     links = fetch_article_links(base_url, translated_keyword)
 
                     if links:
-                        st.success(f"Found {len(links)} articles with the keyword '{translated_keyword}':")
+                        st.success(f"Found {len(links)} articles for the keyword '{translated_keyword}':")
                         for i, link in enumerate(links, start=1):
                             st.write(f"**Article {i}:** [Link]({link})")
-                            with st.spinner("Extracting article content..."):
+                            with st.spinner(f"Extracting content from article {i}..."):
                                 article_date, article_content = extract_article(link, newspaper)
                                 st.write(f"**Published on:** {article_date}")
 
@@ -97,9 +103,9 @@ def main():
                                 else:
                                     st.warning(f"Article {i} has no content.")
                     else:
-                        st.warning(f"No articles found with the keyword '{translated_keyword}'.")
+                        st.warning(f"No articles found for the keyword '{translated_keyword}'. Try using a different keyword.")
         else:
-            st.error("Please enter a keyword.")
+            st.error("Please enter a keyword to search for articles.")
 
 if __name__ == "__main__":
     main()
