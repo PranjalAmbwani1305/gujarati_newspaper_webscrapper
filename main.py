@@ -11,14 +11,12 @@ def fetch_article_links(base_url, keyword):
 
         links = []
         for a in soup.find_all('a', href=True):
-            # Check if the keyword is in the link or the text
             if keyword.lower() in a.get('href', '').lower() or keyword.lower() in a.text.lower():
                 href = a['href']
                 if not href.startswith("http"):
                     href = f"{base_url.rstrip('/')}/{href.lstrip('/')}"
                 links.append(href)
 
-        # Debugging output
         st.write(f"Links found: {links}")
 
         return links
@@ -56,7 +54,7 @@ def extract_article(link, newspaper):
 def main():
     st.set_page_config(page_title="Gujarati News Article Scraper", page_icon="📰")
     st.title("Gujarati News Article Finder")
-    
+
     st.markdown("""
     **Welcome to the Gujarati News Article Finder!**  
     This tool allows you to search for articles from popular Gujarati newspapers like Gujarat Samachar, Mid Day, and Divya Bhaskar.  
@@ -92,7 +90,6 @@ def main():
                 with st.spinner("Searching for articles..."):
                     links = fetch_article_links(base_url, translated_keyword)
 
-                    # Debugging output
                     st.write(f"Searching for articles with keyword: '{translated_keyword}'")
                     st.write(f"Found links: {links}")
 
