@@ -2,19 +2,12 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 from deep_translator import GoogleTranslator
-from urllib.parse import quote
 
 def fetch_article_links(base_url, keyword):
     try:
-        encoded_keyword = quote(keyword)  # URL encode the keyword
-        search_url = f"{base_url}/search/{encoded_keyword}"  # Update the URL format for Sandesh
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-        }
-        response = requests.get(search_url, headers=headers)
+        response = requests.get(base_url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
-
         links = []
         for a in soup.find_all('a', href=True):
             if keyword.lower() in a.get('href', '').lower() or keyword.lower() in a.text.lower():
