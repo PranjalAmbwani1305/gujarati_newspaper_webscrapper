@@ -11,11 +11,15 @@ def fetch_article_links(base_url, keyword):
 
         links = []
         for a in soup.find_all('a', href=True):
+            # Check if the keyword is in the link or the text
             if keyword.lower() in a.get('href', '').lower() or keyword.lower() in a.text.lower():
                 href = a['href']
                 if not href.startswith("http"):
                     href = f"{base_url.rstrip('/')}/{href.lstrip('/')}"
                 links.append(href)
+
+        # Debugging output
+        st.write(f"Links found: {links}")
 
         return links
     except Exception as e:
