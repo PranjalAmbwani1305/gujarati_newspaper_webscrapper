@@ -99,7 +99,7 @@ def main():
     )
 
     newspaper_urls = {
-        "Gujarat Samachar": "https://www.gujarat-samachar.com/",
+        "Gujarat Samachar": "https://www.gujaratsamachar.com/",
         "Mid Day": "https://www.gujaratimidday.com/",
         "Divya Bhaskar": "https://www.divyabhaskar.co.in/"
     }
