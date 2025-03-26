@@ -15,10 +15,6 @@ def fetch_article_links(base_url, keyword):
                 href = a['href']
                 if not href.startswith("http"):
                     href = f"{base_url.rstrip('/')}/{href.lstrip('/')}"
-
-                # Debug output to track found links
-                st.write(f"Found link: {href} (matching keyword: {keyword})")
-
                 links.append(href)
         return links
     except requests.exceptions.RequestException as e:
@@ -48,16 +44,12 @@ def extract_article(link, newspaper):
             date_element = soup.find('span', class_='posted-on')
             if date_element:
                 article_date = date_element.get_text(strip=True)
-            # Fallback date if primary date not found
             if article_date == "Date not found":
                 date_element = soup.find('time', class_='entry-date published')
                 if date_element:
                     datetime_str = date_element.get('datetime')
                     if datetime_str:
                         article_date = datetime_str.split('T')[0]
-
-        # Debug output for date
-        st.write(f"Article Date: {article_date} (Link: {link})")
 
         article_text = ""
         content = None
