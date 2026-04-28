@@ -531,18 +531,11 @@ def reading_progress_bar(word_count):
     mins = max(1, round(word_count / 200))
     st.caption(f"Read time: {mins} min | Words: {word_count}")
 
+
 def render_article_card(art, keyword, idx, newspaper_name, translate_to=None):
-    """
-    Render an article in an expandable card format.
-    
-    Args:
-        art (dict): Article dictionary
-        keyword (str): Search keyword
-        idx (int): Article index
-        newspaper_name (str): Newspaper name
-        translate_to (str): Target translation language
-    """
+
     with st.expander(f"Article {idx}: {art['title'][:80] or art['url'][:80]}", expanded=False):
+
         col1, col2 = st.columns([3, 1])
         with col1:
             st.caption(f"Date: {art['date']} | Read time: {art['read_time']} min | Words: {art['word_count']}")
@@ -552,7 +545,7 @@ def render_article_card(art, keyword, idx, newspaper_name, translate_to=None):
         if art.get("image"):
             try:
                 st.image(art["image"], use_column_width=True)
-            except Exception:
+            except:
                 pass
 
         tab_orig, tab_trans = st.tabs(["Original", "Translated"])
@@ -574,26 +567,29 @@ def render_article_card(art, keyword, idx, newspaper_name, translate_to=None):
                     st.write(st.session_state.articles_cache.get(cache_key, ""))
             else:
                 st.info("Select a translation language from the sidebar.")
-            
-          if "bookmarks" not in st.session_state:
+
+        # ===== BOOKMARK SECTION =====
+
+        if "bookmarks" not in st.session_state:
             st.session_state.bookmarks = []
 
-          bm_key = art["url"]
-          # check if already bookmarked
-          is_bookmarked = any(b["url"] == bm_key for b in st.session_state.bookmarks)
+        bm_key = art["url"]
 
-          # unique button key
-          unique_key = hashlib.md5(bm_key.encode()).hexdigest()
-          if is_bookmarked:
+        is_bookmarked = any(b["url"] == bm_key for b in st.session_state.bookmarks)
+
+        import hashlib
+        unique_key = hashlib.md5(bm_key.encode()).hexdigest()
+
+        if is_bookmarked:
             if st.button("Remove Bookmark", key=f"rm_{unique_key}"):
-              st.session_state.bookmarks = [
-                b for b in st.session_state.bookmarks if b["url"] != bm_key
-              ]
-              st.rerun()
-         else:
-           if st.button("Bookmark", key=f"bm_{unique_key}"):
-             st.session_state.bookmarks.append(art)
-             st.rerun()
+                st.session_state.bookmarks = [
+                    b for b in st.session_state.bookmarks if b["url"] != bm_key
+                ]
+                st.rerun()
+        else:
+            if st.button("Bookmark", key=f"bm_{unique_key}"):
+                st.session_state.bookmarks.append(art)
+                st.rerun()
 
 # ═════════════════════════════════════════════════════════════════════════════
 #                    MAIN APPLICATION
