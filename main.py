@@ -420,45 +420,30 @@ def extract_article(url, newspaper_name):
 #                    TRANSLATION UTILITIES
 # ═════════════════════════════════════════════════════════════════════════════
 
-def translate_text(text, target_lang_code, source="auto", chunk_size=4500):
-    """
-    Translate text in chunks to respect API limits.
-    
-    Args:
-        text (str): Text to translate
-        target_lang_code (str): Target language code
-        source (str): Source language code (default: auto-detect)
-        chunk_size (int): Maximum characters per chunk
-    
-    Returns:
-        str: Translated text or error message
-    """
-    if not text or not text.strip():
+def translate_text(text, target_lang_code, source="auto"):
+    from deep_translator import GoogleTranslator
+    import time
+
+    if not text.strip():
         return ""
-    try:
-        # Split into manageable chunks
-        sentences = text.split("\n")
-        chunks, current = [], ""
-        for s in sentences:
-            if len(current) + len(s) < chunk_size:
-                current += s + "\n"
-            else:
-                if current:
-                    chunks.append(current)
-                current = s + "\n"
-        if current:
-            chunks.append(current)
 
-        translated_parts = []
-        for chunk in chunks:
-            if chunk.strip():
+    chunks = [text[i:i+2000] for i in range(0, len(text), 2000)]
+    result = []
+
+    for chunk in chunks:
+        for attempt in range(3):  # retry 3 times
+            try:
                 translated = GoogleTranslator(source=source, target=target_lang_code).translate(chunk)
-                translated_parts.append(translated or chunk)
-                time.sleep(0.2)  # polite delay
+                result.append(translated)
+                break
+            except Exception:
+                time.sleep(1.5)  # backoff
+        else:
+            result.append(chunk)  # fallback
 
-        return "\n".join(translated_parts)
-    except Exception as e:
-        return f"[Translation error: {e}]\n\n{text}"
+        time.sleep(0.5)  # avoid rate limit
+
+    return " ".join(result)
 
 def detect_language(text):
     """
