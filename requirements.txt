@@ -2,3 +2,7 @@ streamlit
 requests
 beautifulsoup4
 deep-translator
+google-cloud-translate
+langdetect
+lxml
+python-dotenv
