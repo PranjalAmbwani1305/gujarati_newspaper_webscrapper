@@ -6,3 +6,4 @@ google-cloud-translate
 langdetect
 lxml
 python-dotenv
+Hashlib
