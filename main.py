@@ -574,32 +574,26 @@ def render_article_card(art, keyword, idx, newspaper_name, translate_to=None):
                     st.write(st.session_state.articles_cache.get(cache_key, ""))
             else:
                 st.info("Select a translation language from the sidebar.")
+            
+          if "bookmarks" not in st.session_state:
+            st.session_state.bookmarks = []
 
+          bm_key = art["url"]
+          # check if already bookmarked
+          is_bookmarked = any(b["url"] == bm_key for b in st.session_state.bookmarks)
 
-       
-
-# make sure bookmarks exist
-if "bookmarks" not in st.session_state:
-    st.session_state.bookmarks = []
-
-bm_key = art["url"]
-
-# check if already bookmarked
-is_bookmarked = any(b["url"] == bm_key for b in st.session_state.bookmarks)
-
-# unique button key
-unique_key = hashlib.md5(bm_key.encode()).hexdigest()
-
-if is_bookmarked:
-    if st.button("Remove Bookmark", key=f"rm_{unique_key}"):
-        st.session_state.bookmarks = [
-            b for b in st.session_state.bookmarks if b["url"] != bm_key
-        ]
-        st.rerun()
-else:
-    if st.button("Bookmark", key=f"bm_{unique_key}"):
-        st.session_state.bookmarks.append(art)
-        st.rerun()
+          # unique button key
+          unique_key = hashlib.md5(bm_key.encode()).hexdigest()
+          if is_bookmarked:
+            if st.button("Remove Bookmark", key=f"rm_{unique_key}"):
+              st.session_state.bookmarks = [
+                b for b in st.session_state.bookmarks if b["url"] != bm_key
+              ]
+              st.rerun()
+         else:
+           if st.button("Bookmark", key=f"bm_{unique_key}"):
+             st.session_state.bookmarks.append(art)
+             st.rerun()
 
 # ═════════════════════════════════════════════════════════════════════════════
 #                    MAIN APPLICATION
